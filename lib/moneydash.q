@@ -50,7 +50,7 @@
 		o:("*D *F***";1#",")0:file;
 		o:(cols[o]except field) xkey o;
 		:t lj o;
- }
+	}
 
 // add manual transactions
 .md.manual:{[t;file]
@@ -74,8 +74,8 @@
 
 // get daily balance
 .md.dailybalance:{[t]
-  t:update sums amount^balance by acct from t;
-  d:exec distinct date from t;
-  b:{[x;y]sum exec last balance by acct from x where date<=y}[t]'[d];
-  :([] date:d;balance:b);
- }
+		t:update sums amount^balance by acct from t;
+		d:exec distinct date from t;
+		b:{[x;y]sum exec last balance by acct from x where date<=y}[t]'[d];
+		:([] date:d;balance:b);
+	}
