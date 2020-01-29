@@ -2,7 +2,7 @@
 
 kdb+/q scripts for my.moneydashboard.com
 
-# `acct.q`
+### `acct.q`
 
 Main entry script, loads libraries etc. & gets transactions in memory, does
 some data clean up (manual transactions from `manual.csv`, overwriting dates
@@ -14,14 +14,14 @@ If started with `--noplot` on cmd line, does nothing after loading data.
 Otherwise uses `lib/plot.q` to launch a plotly.js based plot of total balance
 over time.
 
-# `lib/moneydash.q`
+### `lib/moneydash.q`
 
 Loads landing page to get request verification token for login
 
 Sends POST request to login endpoint with username & password (read from
 `$HOME`)
 
-Requests personal data JSON via API (authenticated via cookies) & stores in `r`
+Requests personal data JSON via API (authenticated via cookies)
 
 Dependencies:
 
@@ -29,11 +29,11 @@ Dependencies:
 $ conda install -c jmcmurray req os
 ```
 
-## Authentication
+#### Authentication
 
 Username & password should be stored in `~/.mdlogin` in format `user:pass`
 
-# `lib/plot.q`
+### `lib/plot.q`
 
 Makes a plotly.js based plot, serves over HTTP & launches a web browser to plot
 (on Linux desktops).
