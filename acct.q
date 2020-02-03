@@ -9,8 +9,15 @@
 
 t:.md.preparedata[];
 
-/ remove credit card repayments
-t:delete from t where tag like "Repayments",tag2 like "Credit Card*";
-/* TODO add something here to flag unmatched credit card repayments */
-
 if[plot;.md.plot .md.dailybalance t];
+
+-1"Savings (last 3 months):";
+show -3#select sum amount by date.month from t where accttype=`savings;
+
+-1"\nCurrent budgets:";
+b:.md.getbudgets[];
+show delete goal from update pct:100*spend%goal,`$name from flip `name`goal`spend!flip b[;`Name`AmountGoal`AmountSpent];
+
+-1"\nTotal spending (last 3 months):";
+/* TODO - remove where clause once matched transactions are being removed */
+show -3#select income:sum amount where 0<amount,outgoing:sum amount where 0>amount,total:sum amount by date.month from t where not tag in ("Repayments";"Savings";"Transfers")

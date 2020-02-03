@@ -9,6 +9,13 @@
 .md.cmap[`L2Tag]:`tag2
 .md.cmap[`L3Tag]:`tag3
 
+// mapping for acct types
+.md.amap:()!()
+.md.amap[0]:`current
+.md.amap[1]:`savings
+.md.amap[2]:`creditcard
+.md.amap[3]:`other
+
 // get landing page & extract verification token
 .md.getrvt:{[]
 		r:.req.g"https://my.moneydashboard.com/landing";
@@ -45,6 +52,11 @@
 		:t;
 	}
 
+// retrieve account summary
+.md.getaccounts:{[]
+		:.req.g"https://my.moneydashboard.com/api/Account";
+	}
+
 // overwrite data for a field in transactions
 .md.overwrite:{[t;field;file]
 		o:("*D *F***";1#",")0:file;
@@ -57,25 +69,38 @@
 		:t uj ("*D *F***";1#",")0:file;
 	}
 
-// add initial account balances
-.md.initial:{[t;file]
-		:t uj ("*FD*";1#",")0:file;
+// add account balances
+.md.balances:{[t;accts]
+		cb:exec Name!Balance from accts;
+		ib:cb-exec sum amount by acct from t;
+		:update balance:ib[acct]+sums amount by acct from t;
 	}
 
 // prepare full data set including overwrites, manual etc.
 .md.preparedata:{[]
 		.md.auth[];
 		t:.md.getdata[];
+		a:.md.getaccounts[];
 		t:.md.overwrite[t;`date;`:overwrite.csv];
 		t:.md.manual[t;`:manual.csv];
-		t:.md.initial[t;`:initial.csv];
-		:`date xasc t;
+		t:`date xasc t;
+		t:.md.balances[t;a];
+		:update accttype:(exec Name!.md.amap`long$AccountTypeId from a) acct from t;
 	}
 
 // get daily balance
 .md.dailybalance:{[t]
-		t:update sums amount^balance by acct from t;
 		d:exec distinct date from t;
 		b:{[x;y]sum exec last balance by acct from x where date<=y}[t]'[d];
 		:([] date:d;balance:b);
+	}
+
+// removed "matched" transactions with a given tag
+.md.rmmatched:{[t;tag;threshold]
+		/* TODO */
+	}
+
+// get budget data
+.md.getbudgets:{[]
+		:.req.g"https://my.moneydashboard.com/Budgeting/GetAllBudgets";
 	}
